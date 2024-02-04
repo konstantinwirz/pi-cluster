@@ -1,0 +1,38 @@
+---
+- name: Set up Helm
+  hosts: "{{ helm_hosts }}"
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Check if apt source already exists
+      ansible.builtin.stat:
+        path: /etc/apt/sources.list.d/helm-stable-debian.list
+      register: apt_source
+
+    - name: Add signing key
+      ansible.builtin.shell: curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+      when: apt_source.stat.exists == false
+
+    - name: Install apt-transport-https
+      ansible.builtin.apt:
+        name: apt-transport-https
+        state: present
+        force: true
+
+    - name: Add helm repo
+      ansible.builtin.shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+      when: apt_source.stat.exists == false
+
+    - name: Install helm
+      ansible.builtin.apt:
+        name: helm
+        state: present
+        update_cache: true
+
+    - name: Install helm diff plugin
+      become: false
+      kubernetes.core.helm_plugin:
+        plugin_path: "https://github.com/databus23/helm-diff"
+        plugin_version: "3.9.4"
+        state: present
