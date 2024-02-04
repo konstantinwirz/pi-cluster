@@ -79,3 +79,7 @@
 - name: Set up cert-manager
   import_playbook: playbooks/cert-manager.yaml
   tags: ['cert-manager']
+
+- name: Set up MetalLB
+  import_playbook: playbooks/metallb.yaml
+  tags: ['metallb']
