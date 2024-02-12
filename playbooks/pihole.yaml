@@ -1,0 +1,66 @@
+- name: Set up PiHole
+  hosts: master
+  become: false
+  gather_facts: false
+
+  vars_files:
+    - ../config.yaml
+
+  environment:
+    K8S_AUTH_KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+  tasks:
+
+    - name: Add PiHole Helm repository
+      kubernetes.core.helm_repository:
+        name: pihole
+        repo_url: https://mojo2600.github.io/pihole-kubernetes
+
+    - name: Install PiHole
+      kubernetes.core.helm:
+        name: pihole
+        chart_ref: pihole/pihole
+        chart_version: "{{ pihole_version }}"
+        release_namespace: pihole
+        create_namespace: true
+        wait: true
+        values:
+          replicaCount: 1
+          admin:
+            enabled: false
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/cluster-issuer: "letsencrypt-cloudflare"
+            hosts:
+              - pihole.picakelab.net
+            tls:
+              - secretName: pihole-tls
+                hosts:
+                  - pihole.picakelab.net
+          serviceDhcp:
+            enabled: false
+          serviceWeb:
+            https:
+              enabled: false
+            annotations:
+              metallb.universe.tf/allow-shared-ip: pihole-svc
+            loadBalancerIP: 192.168.178.202
+            type: LoadBalancer
+          serviceDns:
+            mixedService: true
+            annotations:
+              metallb.universe.tf/allow-shared-ip: pihole-svc
+            loadBalancerIP: 192.168.178.202
+            type: LoadBalancer
+          doh:
+            enabled: true
+          dnsmasq:
+            customDnsEntries:
+              - address=/pi1/192.168.178.130
+              - address=/pi2/192.168.178.132
+              - address=/pi3/192.168.178.134
+          persistentVolumeClaim:
+            enabled: true
+            storageClass: longhorn
+            size: 5Gi

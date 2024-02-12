@@ -41,6 +41,28 @@
     - name: Install k3s
       shell: curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3s_version }}" INSTALL_K3S_EXEC="server --disable=servicelb" K3S_KUBECONFIG_MODE="644" sh -
 
+    - name: Configure traefik
+      kubernetes.core.k8s:
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+        definition:
+          apiVersion: helm.cattle.io/v1
+          kind: HelmChartConfig
+          metadata:
+            name: traefik
+            namespace: kube-system
+          spec:
+            valuesContent: |-
+              service:
+                spec:
+                  loadBalancerIP: "{{ traefik_loadbalancer_ip }}"
+              ports:
+                websecure:
+                  tls:
+                    enabled: true
+                web:
+                  redirectTo:
+                    port: websecure
+  
     - name: Get k3s node
       ansible.builtin.command: cat /var/lib/rancher/k3s/server/node-token
       changed_when: false
@@ -87,3 +109,7 @@
 - name: Set up Longhorn
   import_playbook: playbooks/longhorn.yaml
   tags: ['longhorn']
+
+- name: Set up PiHole
+  import_playbook: playbooks/pihole.yaml
+  tags: ['pihole']
