@@ -31,9 +31,6 @@
             enabled: true
           webhook:
             enabled: true
-          extraArgs:
-            - --dns01-recursive-nameservers-only=true
-            - --dns01-recursive-nameservers=
 
     - name: Create a secret with CloudFlare Token
       kubernetes.core.k8s:

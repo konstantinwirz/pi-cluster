@@ -83,3 +83,7 @@
 - name: Set up MetalLB
   import_playbook: playbooks/metallb.yaml
   tags: ['metallb']
+
+- name: Set up Longhorn
+  import_playbook: playbooks/longhorn.yaml
+  tags: ['longhorn']

@@ -6,7 +6,7 @@ metadata:
 spec:
   acme:
     email: konstantin@wirz.dev
-    server: https://acme-v02.api.letsencrypt.org/directory
+    server: https://acme-v02.api.letsencrypt.org./directory
     privateKeySecretRef:
       name: letsencrypt-wildcard
     solvers:
