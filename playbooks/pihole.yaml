@@ -24,6 +24,7 @@
         release_namespace: pihole
         create_namespace: true
         wait: true
+        update_repo_cache: true
         values:
           replicaCount: 1
           admin:
