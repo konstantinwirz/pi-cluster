@@ -22,6 +22,7 @@
         chart_version: "{{ cert_manager_version }}"
         release_namespace: cert-manager
         create_namespace: true
+        update_repo_cache: true
         wait: true
         values:
           installCRDs: true
