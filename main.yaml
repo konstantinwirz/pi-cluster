@@ -28,6 +28,17 @@
       ansible.builtin.apt: 
         name: open-iscsi
 
+    - name: Check if search domain is set to 'fritz.box'
+      ansible.builtin.shell: cat /etc/resolv.conf
+      register: resolv_conf_content
+
+    - name: Set search domain to 'local'
+      ansible.builtin.shell: |
+        printf "[main]\ndhcp=dhclient\n" > /etc/NetworkManager/conf.d/dhcp-client.conf
+        printf '\nsupersede domain-search "local";\n' >> /etc/dhcp/dhclient.conf
+        systemctl restart NetworkManager
+      when: "'search fritz.box' in resolv_conf_content.stdout"
+
 - name: Set up k3s master node
   hosts: master
   gather_facts: false
@@ -90,7 +101,7 @@
 
   tasks:
     - name: Install k3s on worker nodes
-      ansible.builtin.shell: curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3s_version }}" K3S_URL="https://{{ hostvars['pi1.local']['ansible_default_ipv4']['address'] }}:6443" K3S_TOKEN="{{ hostvars[groups['master'][0]]['k3s_token'] }}" sh -
+      ansible.builtin.shell: curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3s_version }}" K3S_URL="https://{{ hostvars['pi1']['ansible_default_ipv4']['address'] }}:6443" K3S_TOKEN="{{ hostvars[groups['master'][0]]['k3s_token'] }}" sh -
 
 - name: Set up Helm
   import_playbook: playbooks/helm.yaml
