@@ -24,6 +24,7 @@
         release_namespace: metallb-system
         create_namespace: true
         wait: true
+        update_repo_cache: true
 
     - name: Create MetalLB configuration
       kubernetes.core.k8s:
