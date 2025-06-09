@@ -28,17 +28,6 @@
       ansible.builtin.apt: 
         name: open-iscsi
 
-    - name: Check if search domain is set to 'fritz.box'
-      ansible.builtin.shell: cat /etc/resolv.conf
-      register: resolv_conf_content
-
-    - name: Set search domain to 'local'
-      ansible.builtin.shell: |
-        printf "[main]\ndhcp=dhclient\n" > /etc/NetworkManager/conf.d/dhcp-client.conf
-        printf '\nsupersede domain-search "local";\n' >> /etc/dhcp/dhclient.conf
-        systemctl restart NetworkManager
-      when: "'search fritz.box' in resolv_conf_content.stdout"
-
 - name: Set up k3s master node
   hosts: master
   gather_facts: false
