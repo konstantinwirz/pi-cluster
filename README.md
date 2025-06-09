@@ -12,3 +12,8 @@
 # Update the server address in k3s.yaml
 sed -i '' 's/127.0.0.1/192.168.1.131/g' k3s.yaml
 ```
+
+## PiHole
+
+- [Helm Chart](https://github.com/MoJo2600/pihole-kubernetes/tree/main)
+- [The Big Blocklist Collection](https://firebog.net)
