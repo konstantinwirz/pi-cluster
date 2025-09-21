@@ -11,7 +11,7 @@
       register: apt_source
 
     - name: Add signing key
-      ansible.builtin.shell: curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+      ansible.builtin.shell: curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
       when: apt_source.stat.exists == false
 
     - name: Install apt-transport-https
@@ -21,7 +21,7 @@
         force: true
 
     - name: Add helm repo
-      ansible.builtin.shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+      ansible.builtin.shell: echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
       when: apt_source.stat.exists == false
 
     - name: Install helm
@@ -34,5 +34,5 @@
       become: false
       kubernetes.core.helm_plugin:
         plugin_path: "https://github.com/databus23/helm-diff"
-        plugin_version: "3.9.4"
+        plugin_version: "3.13.0"
         state: present

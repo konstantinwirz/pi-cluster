@@ -1,0 +1,28 @@
+- name: Update all Raspberry Pis and reboot
+  hosts: cluster
+  become: true
+
+  tasks:
+    - name: Ping cluster nodes
+      ansible.builtin.ping:
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Update all packages
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+
+    - name: Upgrade the OS
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Run apt-get clean
+      ansible.builtin.apt:
+        clean: true
+
+    - name: Reboot the system
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible after apt upgrade"
