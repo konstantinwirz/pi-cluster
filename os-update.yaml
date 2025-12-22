@@ -8,7 +8,7 @@
 
     - name: Update apt cache
       ansible.builtin.apt:
-        update_cache: true
+        update_cache: yes
 
     - name: Update all packages
       ansible.builtin.apt:

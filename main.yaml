@@ -90,7 +90,7 @@
 
   tasks:
     - name: Install k3s on worker nodes
-      ansible.builtin.shell: curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3s_version }}" K3S_URL="https://{{ hostvars['pi1.local']['ansible_default_ipv4']['address'] }}:6443" K3S_TOKEN="{{ hostvars[groups['master'][0]]['k3s_token'] }}" sh -
+      ansible.builtin.shell: curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3s_version }}" K3S_URL="https://{{ hostvars['pi1']['ansible_default_ipv4']['address'] }}:6443" K3S_TOKEN="{{ hostvars[groups['master'][0]]['k3s_token'] }}" sh -
 
 - name: Set up Helm
   import_playbook: playbooks/helm.yaml

@@ -2,6 +2,6 @@ k3s_version: v1.33.4+k3s1
 cert_manager_version: v1.15.4
 metallb_version: v0.15.2
 longhorn_version: v1.7.2
-pihole_version: 2.34.0
+pihole_version: 2.35.0
 
 traefik_loadbalancer_ip: 192.168.1.201
