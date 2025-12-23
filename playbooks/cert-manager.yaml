@@ -31,7 +31,7 @@
           cainjector:
             enabled: true
           webhook:
-            enabled: true
+            replicaCount: 1
 
     - name: Create a secret with CloudFlare Token
       kubernetes.core.k8s:
