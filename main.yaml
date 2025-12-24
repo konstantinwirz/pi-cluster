@@ -113,3 +113,7 @@
 - name: Set up PiHole
   import_playbook: playbooks/pihole.yaml
   tags: ['pihole']
+
+- name: Set up qbittorrent
+  import_playbook: playbooks/qbittorrent.yaml
+  tags: ['torrent']

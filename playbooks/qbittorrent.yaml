@@ -1,0 +1,15 @@
+- name: Set up qbittorrent with gluetun
+  hosts: master
+  gather_facts: false
+
+  environment: 
+    K8S_AUTH_KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+  vars_files:
+    - ../config.yaml
+
+  tasks:
+    - name: Create workloads
+      kubernetes.core.k8s:
+        wait: true
+        resource_definition: "{{ lookup('file', 'manifests/qbittorrent.yaml') | from_yaml_all }}"
