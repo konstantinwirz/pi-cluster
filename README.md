@@ -10,7 +10,7 @@
  ```shell
  scp pi1:/etc/rancher/k3s/k3s.yaml k3s.yaml
 # Update the server address in k3s.yaml
-sed -i '' 's/127.0.0.1/192.168.1.131/g' k3s.yaml
+sed -i '' 's/127.0.0.1/192.168.4.10/g' k3s.yaml
 ```
 
 ## PiHole

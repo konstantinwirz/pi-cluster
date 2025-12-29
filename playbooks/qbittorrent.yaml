@@ -9,6 +9,7 @@
     - ../config.yaml
 
   tasks:
+  
     - name: Create workloads
       kubernetes.core.k8s:
         wait: true

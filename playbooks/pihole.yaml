@@ -46,13 +46,13 @@
               enabled: false
             annotations:
               metallb.universe.tf/allow-shared-ip: pihole-svc
-            loadBalancerIP: 192.168.1.202
+            loadBalancerIP: 192.168.4.202
             type: LoadBalancer
           serviceDns:
             mixedService: true
             annotations:
               metallb.universe.tf/allow-shared-ip: pihole-svc
-            loadBalancerIP: 192.168.1.202
+            loadBalancerIP: 192.168.4.202
             type: LoadBalancer
           doh:
             enabled: true
@@ -60,11 +60,11 @@
             customsettings:
               except-interface=nonexisting
             customDnsEntries:
-              - address=/pi1/192.168.1.131
-              - address=/pi2/192.168.1.132
-              - address=/pi3/192.168.1.133
-              - address=/pi4/192.168.1.134
-              - address=/pi5/192.168.1.135
+              - address=/pi1/192.168.4.10
+              - address=/pi2/192.168.4.11
+              - address=/pi3/192.168.4.12
+              - address=/pi4/192.168.4.13
+              - address=/pi5/192.168.4.14
           persistentVolumeClaim:
             enabled: true
             storageClass: longhorn
