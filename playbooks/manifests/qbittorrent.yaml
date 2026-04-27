@@ -58,6 +58,29 @@ spec:
         runAsUser: 0    # Run all containers as root
         fsGroup: 0      # Use root group for volumes
       containers:
+        - name: vpn-killswitch
+          image: kitov/vpn-killswitch:v0.4.0
+          command: ["./vpn-killswitch"]
+          args: ["-port", "9000", "-asn", "AS209103", "-log-level", "debug"]
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: killswitch
+            containerPort: 9000
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: killswitch
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 1
+          resources:
+            limits:
+              cpu: 50m
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
         - name: qbittorrent
           image: "linuxserver/qbittorrent:5.1.4"
           imagePullPolicy: IfNotPresent
@@ -82,14 +105,16 @@ spec:
             value: "8080"
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /killswitch
+              port: 9000
             initialDelaySeconds: 5
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /killswitch
+              port: 9000
             initialDelaySeconds: 5
+            failureThreshold: 1
+            periodSeconds: 20
           resources:
             limits:
               cpu: 200m
