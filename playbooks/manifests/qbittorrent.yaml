@@ -59,7 +59,7 @@ spec:
         fsGroup: 0      # Use root group for volumes
       containers:
         - name: vpn-killswitch
-          image: kitov/vpn-killswitch:v0.4.0
+          image: kitov/vpn-killswitch:v0.5.0
           command: ["./vpn-killswitch"]
           args: ["-port", "9000", "-asn", "AS209103", "-log-level", "debug"]
           imagePullPolicy: IfNotPresent
