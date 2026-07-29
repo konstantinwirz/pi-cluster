@@ -1,8 +1,8 @@
-- name: Set up qbittorrent with gluetun
+- name: Set up qbittorrent
   hosts: master
   gather_facts: false
 
-  environment: 
+  environment:
     K8S_AUTH_KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
   vars_files:
