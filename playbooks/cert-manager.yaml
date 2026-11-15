@@ -50,8 +50,3 @@
       kubernetes.core.k8s:
         wait: true
         resource_definition: "{{ lookup('file', 'manifests/cluster-issuer.yaml') | from_yaml }}"
-
-    - name: Configure traefik
-      kubernetes.core.k8s:
-        wait: true
-        resource_definition: "{{ lookup('file', 'manifests/traefik-config.yaml') | from_yaml }}"

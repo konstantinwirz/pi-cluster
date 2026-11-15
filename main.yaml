@@ -60,8 +60,11 @@
                   tls:
                     enabled: true
                 web:
-                  redirectTo:
-                    port: websecure
+                  redirections:
+                    entryPoint:
+                      to: websecure
+                      scheme: https
+                      permanent: true
   
     - name: Get k3s node
       ansible.builtin.command: cat /var/lib/rancher/k3s/server/node-token
