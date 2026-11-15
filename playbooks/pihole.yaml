@@ -27,6 +27,8 @@
         update_repo_cache: true
         values:
           replicaCount: 1
+          extraEnvVars:
+            FTLCONF_webserver_domain: pihole.picakelab.net
           admin:
             enabled: false
           ingress:
