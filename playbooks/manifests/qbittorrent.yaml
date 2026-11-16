@@ -82,7 +82,7 @@ spec:
               cpu: 50m
               memory: 64Mi
         - name: qbittorrent
-          image: "linuxserver/qbittorrent:5.2.1"
+          image: "linuxserver/qbittorrent:5.3.0"
           imagePullPolicy: IfNotPresent
           ports:
           - name: http
