@@ -113,6 +113,10 @@
   import_playbook: playbooks/longhorn.yaml
   tags: ['longhorn']
 
+- name: Set up monitoring
+  import_playbook: playbooks/monitoring.yaml
+  tags: ['monitoring']
+
 - name: Set up PiHole
   import_playbook: playbooks/pihole.yaml
   tags: ['pihole']

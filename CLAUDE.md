@@ -12,7 +12,7 @@ Ansible playbooks that provision a k3s Kubernetes cluster on Raspberry Pi 5 node
 # Full provisioning (OS prep, k3s, then all add-ons)
 ansible-playbook main.yaml
 
-# Re-run a single add-on via its tag: helm, cert-manager, metallb, longhorn, pihole, torrent
+# Re-run a single add-on via its tag: helm, cert-manager, metallb, longhorn, monitoring, pihole, torrent
 ansible-playbook main.yaml --tags pihole
 
 # apt dist-upgrade + reboot all nodes
@@ -30,7 +30,7 @@ sed -i 's/127.0.0.1/192.168.4.10/g' k3s.yaml
 
 ## Architecture
 
-- **`main.yaml`** runs everything in order: cluster-wide node prep (cgroups in `/boot/firmware/cmdline.txt`, `open-iscsi` for Longhorn), k3s server on `master` (with `servicelb` disabled so MetalLB handles LoadBalancers), k3s agents on `workers`, then each `playbooks/*.yaml` through `import_playbook` with a tag. Order matters: Helm → cert-manager → MetalLB → Longhorn → PiHole → qbittorrent, because later workloads depend on the `longhorn` StorageClass, the `letsencrypt-cloudflare` ClusterIssuer and MetalLB IPs.
+- **`main.yaml`** runs everything in order: cluster-wide node prep (cgroups in `/boot/firmware/cmdline.txt`, `open-iscsi` for Longhorn), k3s server on `master` (with `servicelb` disabled so MetalLB handles LoadBalancers), k3s agents on `workers`, then each `playbooks/*.yaml` through `import_playbook` with a tag. Order matters: Helm → cert-manager → MetalLB → Longhorn → monitoring → PiHole → qbittorrent, because later workloads depend on the `longhorn` StorageClass, the `letsencrypt-cloudflare` ClusterIssuer and MetalLB IPs. `monitoring` (kube-prometheus-stack) runs right after Longhorn since its Prometheus/Alertmanager/Grafana PVCs need the `longhorn` StorageClass and its Grafana ingress needs the ClusterIssuer.
 - **Workers join through cross-play facts.** The worker play reads the join token from `hostvars[groups['master'][0]]['k3s_token']` (set in the master play) and the master IP from `hostvars['pi1']['ansible_default_ipv4']` (gathered in the first play). Running the worker play on its own, or skipping fact gathering for `pi1`, breaks the join.
 - **Add-on playbooks** (`playbooks/`) all target `master`, set `K8S_AUTH_KUBECONFIG=/etc/rancher/k3s/k3s.yaml` and use `kubernetes.core.helm` / `kubernetes.core.k8s` on the Pi itself, so nothing runs from a local kubeconfig. They load `../config.yaml` (the path is relative to the playbook). Raw manifests in `playbooks/manifests/` are applied with `lookup('file', ...) | from_yaml` (single doc) or `from_yaml_all` (multi-doc).
 - **`config.yaml`** is the single place for pinned versions (k3s and Helm charts). Version bumps go here; container image tags for qbittorrent and `vpn-killswitch` live in `playbooks/manifests/qbittorrent.yaml`.
