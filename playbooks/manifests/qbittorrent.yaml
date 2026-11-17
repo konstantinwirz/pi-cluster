@@ -12,7 +12,7 @@ metadata:
     app: qbittorrent
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -27,7 +27,7 @@ metadata:
     app: qbittorrent
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 250Gi
@@ -64,9 +64,9 @@ spec:
           args: ["--port", "9000", "--asn", "209103", "--log-level", "info", "--poll-interval", "20"]
           imagePullPolicy: IfNotPresent
           ports:
-          - name: killswitch
-            containerPort: 9000
-            protocol: TCP
+            - name: killswitch
+              containerPort: 9000
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /killswitch
@@ -85,24 +85,24 @@ spec:
           image: "linuxserver/qbittorrent:5.3.0"
           imagePullPolicy: IfNotPresent
           ports:
-          - name: http
-            containerPort: 8080
-            protocol: TCP
-          - name: bittorrent-tcp
-            containerPort: 6881
-            protocol: TCP
-          - name: bittorrent-udp
-            containerPort: 6881
-            protocol: UDP
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: bittorrent-tcp
+              containerPort: 6881
+              protocol: TCP
+            - name: bittorrent-udp
+              containerPort: 6881
+              protocol: UDP
           env:
-          - name: PUID
-            value: "0"   # Run as root
-          - name: PGID
-            value: "0"   # Root group
-          - name: TZ
-            value: "Europe/Berlin"
-          - name: WEBUI_PORT
-            value: "8080"
+            - name: PUID
+              value: "0"   # Run as root
+            - name: PGID
+              value: "0"   # Root group
+            - name: TZ
+              value: "Europe/Berlin"
+            - name: WEBUI_PORT
+              value: "8080"
           livenessProbe:
             httpGet:
               path: /killswitch
@@ -165,17 +165,17 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: qbittorrent.picakelab.net
-    http:
-      paths:
-      - backend:
-          service:
-            name: qbittorrent
-            port:
-              name: http
-        path: /
-        pathType: ImplementationSpecific
+    - host: qbittorrent.picakelab.net
+      http:
+        paths:
+          - backend:
+              service:
+                name: qbittorrent
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
   tls:
-  - hosts:
-    - qbittorrent.picakelab.net
-    secretName: qbittorrent-tls
+    - hosts:
+        - qbittorrent.picakelab.net
+      secretName: qbittorrent-tls

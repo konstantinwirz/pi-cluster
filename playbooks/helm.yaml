@@ -1,6 +1,6 @@
 ---
 - name: Set up Helm
-  hosts: "{{ helm_hosts }}"
+  hosts: "{{ helm_hosts | default('master') }}"
   become: true
   gather_facts: false
 
@@ -11,8 +11,15 @@
       register: apt_source
 
     - name: Add signing key
-      ansible.builtin.shell: curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-      when: apt_source.stat.exists == false
+      ansible.builtin.shell: >-  # noqa: command-instead-of-module
+        set -o pipefail &&
+        curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
+        | gpg --dearmor
+        | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+      args:
+        executable: /bin/bash
+      changed_when: true
+      when: not apt_source.stat.exists
 
     - name: Install apt-transport-https
       ansible.builtin.apt:
@@ -21,8 +28,14 @@
         force: true
 
     - name: Add helm repo
-      ansible.builtin.shell: echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-      when: apt_source.stat.exists == false
+      ansible.builtin.shell: >-
+        set -o pipefail &&
+        echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+        | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+      args:
+        executable: /bin/bash
+      changed_when: true
+      when: not apt_source.stat.exists
 
     - name: Install helm
       ansible.builtin.apt:
