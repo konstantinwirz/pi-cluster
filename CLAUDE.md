@@ -26,7 +26,7 @@ scp pi1:/etc/rancher/k3s/k3s.yaml k3s.yaml
 sed -i 's/127.0.0.1/192.168.4.10/g' k3s.yaml
 ```
 
-`ansible.cfg` points at `inventory.ini` automatically. Control machine needs the `kubernetes.core` and `community.general` collections, and the 1Password CLI (`op`) signed in: `playbooks/cert-manager.yaml` reads the Cloudflare API token with the `community.general.onepassword` lookup.
+`ansible.cfg` points at `inventory.ini` automatically. Control machine needs the collections in `requirements.yml` (`kubernetes.core`, `community.general` — install with `ansible-galaxy collection install -r requirements.yml`), and the 1Password CLI (`op`) signed in: `playbooks/cert-manager.yaml` reads the Cloudflare API token with the `community.general.onepassword` lookup. CI's `ansible-lint` run also installs from `requirements.yml` (passed via the action's `requirements_file` input) — without it, lint can't resolve any `kubernetes.core.*` module and fails every add-on playbook.
 
 ## Architecture
 
