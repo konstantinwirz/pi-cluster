@@ -1,0 +1,14 @@
+- name: Set up Synology DSM proxy
+  hosts: master
+  gather_facts: false
+
+  environment:
+    K8S_AUTH_KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+  vars_files:
+    - ../config.yaml
+
+  tasks:
+    - name: Create Synology service and ingress
+      kubernetes.core.k8s:
+        resource_definition: "{{ lookup('file', 'manifests/synology.yaml') | from_yaml_all }}"

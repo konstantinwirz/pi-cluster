@@ -146,3 +146,7 @@
 - name: Set up Jellyfin proxy
   import_playbook: playbooks/jellyfin.yaml
   tags: ['jellyfin']
+
+- name: Set up Synology DSM proxy
+  import_playbook: playbooks/synology.yaml
+  tags: ['synology']

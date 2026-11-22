@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: synology
+---
+# DSM only serves its own (self-signed) certificate on 5001, so Traefik
+# talks HTTPS to it without verifying the certificate.
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: synology
+  namespace: synology
+spec:
+  insecureSkipVerify: true
+---
+# No selector: traffic goes to DSM on the Synology NAS, listed in the
+# EndpointSlice below.
+apiVersion: v1
+kind: Service
+metadata:
+  name: synology
+  namespace: synology
+  labels:
+    app: synology
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: https
+    traefik.ingress.kubernetes.io/service.serverstransport: synology-synology@kubernetescrd
+spec:
+  ports:
+    - name: https
+      port: 5001
+      targetPort: 5001
+      protocol: TCP
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: synology-nas
+  namespace: synology
+  labels:
+    app: synology
+    kubernetes.io/service-name: synology
+    endpointslice.kubernetes.io/managed-by: ansible
+addressType: IPv4
+ports:
+  - name: https
+    port: 5001
+    protocol: TCP
+endpoints:
+  - addresses:
+      - 192.168.1.180
+    conditions:
+      ready: true
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: synology
+  namespace: synology
+  labels:
+    app: synology
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-cloudflare"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: synology.picakelab.net
+      http:
+        paths:
+          - backend:
+              service:
+                name: synology
+                port:
+                  name: https
+            path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - synology.picakelab.net
+      secretName: synology-tls
