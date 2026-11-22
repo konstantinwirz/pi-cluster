@@ -142,3 +142,7 @@
 - name: Set up qbittorrent
   import_playbook: playbooks/qbittorrent.yaml
   tags: ['torrent']
+
+- name: Set up Jellyfin proxy
+  import_playbook: playbooks/jellyfin.yaml
+  tags: ['jellyfin']
